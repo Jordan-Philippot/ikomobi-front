@@ -1,44 +1,54 @@
 "use client";
-import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import {
-  fetchTodosStart,
-  fetchTodosSuccess,
-  fetchTodosFailure,
-  completeTodo,
-} from "../redux/reducers/todoReducer";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setToken } from "@/redux/reducers/authReducer";
 import axios from "axios";
-import TodoForm from "@/app/components/TodoForm";
-import TodoList from "@/app/components/TodoList";
+import { useRouter } from "next/navigation";
 
 const Home = () => {
-  const dispatch = useAppDispatch();
-  const todos = useAppSelector((state) => state.todos.items);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const router = useRouter();
 
-  useEffect(() => {
-    const fetchTodos = async () => {
-      dispatch(fetchTodosStart());
-      try {
-        const response = await axios.get("/api/todos");
-        dispatch(fetchTodosSuccess(response.data));
-      } catch (error) {
-        // dispatch(fetchTodosFailure(error?.message));
-      }
-    };
+  const URI_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT as string;
 
-    fetchTodos();
-  }, [dispatch]);
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(URI_ENDPOINT + "/login", {
+        username,
+        password,
+      });
+      // dispatch(setToken("ok"));
 
-  const handleComplete = (id: number) => {
-    dispatch(completeTodo(id));
+      dispatch(setToken(response.data.token));
+      router.push("/todos");
+    } catch (error) {
+      console.error("Failed to login:", error);
+    }
   };
 
   return (
-    <main>
-      <h1>Todo List</h1>
-      <TodoForm />
-      <TodoList todos={todos} onComplete={handleComplete} />
-    </main>
+    <div className="login-form">
+      <h1>Login</h1>
+      <form onSubmit={handleLogin}>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit" disabled={!username || !password}>
+          Login
+        </button>
+      </form>
+    </div>
   );
 };
 

@@ -1,49 +1,89 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Todo } from "../types";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+
+export interface Todo {
+  id: number;
+  text: string;
+  completed: boolean;
+}
 
 interface TodoState {
-  items: Todo[];
-  loading: boolean;
+  todos: Todo[];
+  status: "start" | "loading" | "success" | "failed";
   error: string | null;
 }
 
 const initialState: TodoState = {
-  items: [],
-  loading: false,
+  todos: [],
+  status: "start",
   error: null,
 };
+
+const port = process.env.NEXT_PUBLIC_API_ENDPOINT;
+export const fetchTodos = createAsyncThunk(
+  "todos/fetchTodos",
+  async (token: string) => {
+    const response = await axios.get(port + "/todos", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  }
+);
+
+export const addTodo = createAsyncThunk(
+  "todos/addTodo",
+  async ({ text, token }: { text: string; token: string }) => {
+    const response = await axios.post(
+      port + "/todos",
+      { text },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  }
+);
+
+export const completeTodo = createAsyncThunk(
+  "todos/completeTodo",
+  async ({ id, token }: { id: number; token: string }) => {
+    await axios.delete(port + `/todos/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return id;
+  }
+);
 
 const todoSlice = createSlice({
   name: "todos",
   initialState,
-  reducers: {
-    fetchTodosStart(state) {
-      state.loading = true;
-      state.error = null;
-    },
-    fetchTodosSuccess(state, action: PayloadAction<Todo[]>) {
-      state.loading = false;
-      state.items = action.payload;
-    },
-    fetchTodosFailure(state, action: PayloadAction<string>) {
-      state.loading = false;
-      state.error = action.payload;
-    },
-    addTodo(state, action: PayloadAction<Todo>) {
-      state.items.push(action.payload);
-    },
-    completeTodo(state, action: PayloadAction<number>) {
-      state.items = state.items.filter((todo) => todo.id !== action.payload);
-    },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTodos.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchTodos.fulfilled, (state, action) => {
+        state.status = "success";
+        state.todos = action.payload;
+      })
+      .addCase(fetchTodos.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || null;
+      })
+      .addCase(addTodo.fulfilled, (state, action) => {
+        state.todos.push(action.payload);
+      })
+      .addCase(completeTodo.fulfilled, (state, action) => {
+        state.todos = state.todos.filter((todo) => todo.id !== action.payload);
+      });
   },
 });
-
-export const {
-  fetchTodosStart,
-  fetchTodosSuccess,
-  fetchTodosFailure,
-  addTodo,
-  completeTodo,
-} = todoSlice.actions;
 
 export default todoSlice.reducer;

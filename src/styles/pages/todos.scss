@@ -1,0 +1,10 @@
+.todo-list-container {
+  margin-top: var(--spacing-xl);
+  .todo-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-m);
+    margin-top: var(--spacing-m);
+  }
+}

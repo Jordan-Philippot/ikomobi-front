@@ -1,13 +1,12 @@
 "use client";
 import { Provider } from "react-redux";
-import store from "../redux/store";
-import ProtectedRoute from "./main/ProtectedRoute";
+import store from "../lib/redux/store";
+import { AuthProvider } from "../lib/context/AuthContext";
 
 function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Provider store={store}>
-      <ProtectedRoute />
-      {children}
+      <AuthProvider>{children}</AuthProvider>
     </Provider>
   );
 }

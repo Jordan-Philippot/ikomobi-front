@@ -37,7 +37,7 @@ export const addTodo = createAsyncThunk(
   async ({ text, token }: { text: string; token: string }) => {
     const response = await axios.post(
       port + "/todos",
-      { text },
+      { text, created_at: new Date() },
       {
         headers: {
           Authorization: `Bearer ${token}`,

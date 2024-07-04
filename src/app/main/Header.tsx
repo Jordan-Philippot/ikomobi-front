@@ -1,21 +1,14 @@
 "use client";
-import Link from "next/link";
-// import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-// import { logout } from "@/redux/reducers/authReducer";
+import { useAuth } from "@/lib/context/AuthContext";
+import Button from "../ui/Button";
 
 const Header = () => {
-  // const dispatch = useAppDispatch();
-  // const { user } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <header>
       <nav>
-        <Link href="/">Login</Link>
-        {/* {user ? (
-          <button onClick={() => dispatch(logout())}>Logout</button>
-        ) : ( */}
-        <Link href="/todos">To do</Link>
-        {/* )} */}
+        {isAuthenticated && <Button onClick={() => logout()} label="Logout" />}
       </nav>
     </header>
   );

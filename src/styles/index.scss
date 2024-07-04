@@ -1,30 +1,31 @@
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
+// Globals
+@import "./breakpoints.scss";
+@import "./colors.scss";
+@import "./fonts.scss";
+@import "./spacing.scss";
+@import "./normalize.scss";
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+// Main
+@import "./main/header.scss";
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
+// Components
+@import "./components/index.scss";
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+// UI
+@import "./ui/index.scss";
 
-main {
-  background-color: blue;
+// Pages
+@import "./pages/home.scss";
+@import "./pages/todos.scss";
+
+.page-container {
+  position: relative;
+  min-height: 100vh;
+  padding: 15vh 0;
+
+  form {
+    button {
+      width: 100%;
+    }
+  }
 }

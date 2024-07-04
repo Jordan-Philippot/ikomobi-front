@@ -1,0 +1,38 @@
+// Définition des breakpoints
+$breakpoints: (
+  xs: 0,
+  // Extra small devices (portrait phones, less than 576px)
+  sm: 576px,
+  // Small devices (landscape phones, 576px and up)
+  md: 768px,
+  // Medium devices (tablets, 768px and up)
+  lg: 992px,
+  // Large devices (desktops, 992px and up)
+  xl: 1200px,
+  // Extra large devices (large desktops, 1200px and up)
+  xxl: 1450px // XXL devices (large desktops, 1200px and up)
+
+);
+
+// Mixin pour les média queries
+@mixin breakpoint($name) {
+  $point: map-get($breakpoints, $name);
+
+  @media (min-width: $point) {
+    @content;
+  }
+}
+
+// Padding horizontal layout by media
+:root {
+  --layout-grid-xs: 10vw;
+  // --layout-grid-sm: 100px;
+}
+
+// Utilisation :
+// .example {
+//   width: 100%;
+//   @include breakpoint(md) {
+//     width: 50%;
+//   }
+// }

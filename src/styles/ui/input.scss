@@ -1,0 +1,141 @@
+@import '../breakpoints.scss';
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .input {
+    box-sizing: border-box;
+    padding: 12px 16px;
+    border: 1px solid var(--grey-200);
+    border-radius: 8px;
+    height: 48px;
+    background-color: var(--white);
+    color: var(--grey-800);
+    min-width: 250px;
+    width: 320px;
+    font-size: var(--text-l);
+    line-height: var(--text-l-line-height);
+    outline: 0;
+
+    &::placeholder {
+      font-size: var(--text-l);
+      line-height: var(--text-l-line-height);
+      color: var(--grey-200);
+    }
+
+    &[data-left-icon='true'] {
+      padding-left: 40px;
+
+      &::placeholder {
+        position: relative;
+      }
+    }
+
+
+    /* -------------
+      Hover, Active
+    ---------------- */
+    &:hover {
+      border: 1px solid var(--grey-700);
+      box-shadow: var(--shadow-m);
+
+      &:disabled {
+        border: 1px solid var(--grey-200);
+      }
+    }
+
+    &:active,
+    &:focus {
+      border: 1px solid var(--border-focus-primary);
+    }
+
+    @include breakpoint(lg) {
+      min-width: 320px;
+    }
+
+
+
+    /* ----------
+      Disabled
+    -------------*/
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+
+      +.icon-left,
+      +.icon-right {
+        opacity: 0.5;
+      }
+    }
+
+  }
+
+  /* ----------
+      Icon
+    -------------*/
+  .icon-left,
+  .icon-right {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    width: 16px;
+    height: 16px;
+  }
+
+  .icon-left {
+    left: 16px;
+  }
+
+  .icon-right {
+    right: 16px;
+  }
+
+  /* ----------
+      Status
+    -------------*/
+  &[data-status="warning"] {
+    .input {
+      border: 1px solid var(--main-warning);
+
+    }
+  }
+
+  &[data-status="success"] {
+    .input {
+      border: 1px solid var(--main-success);
+    }
+  }
+
+  &[data-status="error"] {
+    .input {
+      border: 1px solid var(--main-alert);
+
+
+      +.icon-right path {
+        fill: var(--red-500) !important;
+      }
+
+      &:hover {
+        border: 1px solid var(--red-700);
+
+        +.icon-right path {
+          fill: var(--red-700) !important;
+
+        }
+      }
+
+      &:active,
+      &:focus {
+        border: 1px solid var(--blue-400);
+      }
+
+    }
+
+  }
+
+}

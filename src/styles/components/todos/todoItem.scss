@@ -1,0 +1,27 @@
+@import "@/styles/breakpoints.scss";
+
+.todo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--white);
+  font-weight: bold;
+  width: auto;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: var(--spacing-m) var(--spacing-m);
+  button {
+    margin-left: var(--spacing-s);
+  }
+
+  @include breakpoint(sm) {
+    min-width: 400px;
+  }
+  @include breakpoint(md) {
+    min-width: 600px;
+  }
+  @include breakpoint(lg) {
+    min-width: 700px;
+  }
+}

@@ -1,0 +1,53 @@
+@import "../colors.scss";
+
+.field {
+  display: flex;
+  align-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--spacing-xxs);
+  flex-direction: column;
+  min-height: 100px;
+  color: var(--white);
+  font-weight: bold;
+  label {
+    font-size: var(--text-m);
+    line-height: var(--text-m-line-height);
+    cursor: pointer;
+  }
+
+  &[data-disabled="true"] {
+    label {
+      cursor: not-allowed;
+    }
+
+    label,
+    .input-message {
+      opacity: 0.5;
+    }
+  }
+
+  &[data-status="error"] {
+    .input-message {
+      color: var(--main-alert);
+
+      svg path {
+        fill: var(--main-alert);
+      }
+    }
+
+    sup {
+      color: var(--main-alert);
+    }
+  }
+
+  .input-message {
+    font-size: var(--text-s);
+    line-height: var(--text-m-line-height);
+  }
+
+  .message_container {
+    display: flex;
+    width: 100%;
+  }
+}

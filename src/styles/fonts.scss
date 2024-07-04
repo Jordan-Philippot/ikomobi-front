@@ -1,0 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
+
+/* ----- Text ----- */
+:root {
+  // Sizes
+  --text-xs: 10px;
+  --text-s: 12px;
+  --text-m: 14px;
+  --text-l: 16px;
+
+  // Line height
+  --text-s-line-height: 16px;
+  --text-m-line-height: 20px;
+  --text-l-line-height: 24px;
+
+  /* ----- Title ----- */
+  // Sizes
+  --title-h3: 20px;
+  --title-h2: 28px;
+  --title-h1: 36px;
+  // Line height
+  --title-h3-line-height: 28px;
+  --title-h2-line-height: 36px;
+  --title-h1-line-height: 44px;
+}

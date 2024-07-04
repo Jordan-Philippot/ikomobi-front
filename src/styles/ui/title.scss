@@ -1,0 +1,34 @@
+.title {
+  margin: 0;
+  white-space: pre-line;
+  font-weight: normal;
+  font-family: Sulphur, sans-serif;
+  color: var(--white);
+  &.h1 {
+    font-size: var(--title-h1);
+    line-height: var(--title-h1-line-height);
+  }
+
+  &.h2 {
+    font-size: var(--title-h2);
+    line-height: var(--title-h2-line-height);
+  }
+
+  &.h3 {
+    font-size: var(--title-h3);
+    line-height: var(--title-h3-line-height);
+  }
+
+  /* ----- Weight ----- */
+  &.lighter {
+    font-weight: lighter;
+  }
+
+  &.regular {
+    font-weight: normal;
+  }
+
+  &.bold {
+    font-weight: bold;
+  }
+}

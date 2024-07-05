@@ -13,12 +13,14 @@ import Field from "../ui/Field";
 import Button from "../ui/Button";
 import LoaderSuspense from "../ui/LoaderSuspense";
 import TodoItem from "./Todo";
+import useMessage from "@/lib/hooks/useMessage";
 
 const Todos = () => {
   const [text, setText] = useState("");
   const dispatch = useAppDispatch();
   const { token } = useSelector((state: RootState) => state.auth);
   const { todos, status } = useSelector((state: RootState) => state.todos);
+  const { sendSuccess } = useMessage();
 
   useEffect(() => {
     if (token) {
@@ -31,11 +33,13 @@ const Todos = () => {
     if (text.length > 0 && text.length <= 50) {
       dispatch(addTodo({ text, token: token as string }));
       setText("");
+      sendSuccess("Task added");
     }
   };
 
   const handleCompleteTodo = (id: number) => {
     dispatch(completeTodo({ id, token: token as string }));
+    sendSuccess("Task completed");
   };
 
   return (

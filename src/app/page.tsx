@@ -17,7 +17,6 @@ const Home = () => {
     try {
       await login(username, password);
     } catch (error: any) {
-      console.error("Failed to login:", error);
       setError(
         error.response?.data?.message || "An error occurred during login."
       );

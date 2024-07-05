@@ -1,0 +1,72 @@
+@import "../colors.scss";
+
+$borderRadius: 8px;
+
+.toaster {
+  position: fixed;
+  z-index: 10;
+  bottom: 30px;
+  display: table;
+  width: fit-content;
+  border-radius: $borderRadius;
+  box-shadow: var(--shadow-l);
+  overflow: hidden;
+
+  &[data-position="left"] {
+    left: 30px;
+    right: unset;
+  }
+
+  &[data-position="right"] {
+    left: unset;
+    right: 30px;
+  }
+
+  .cross-container {
+    margin-left: var(--spacing-m);
+    width: 24px;
+    height: 24px;
+  }
+
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    border-bottom-left-radius: $borderRadius;
+    border-bottom-right-radius: $borderRadius;
+  }
+
+  &[data-status="default"] {
+    .progress-bar {
+      background-color: var(--main-primary);
+    }
+
+  }
+
+  &[data-status="information"] {
+    .progress-bar {
+      background-color: var(--main-info);
+    }
+  }
+
+  &[data-status="success"] {
+    .progress-bar {
+      background-color: var(--main-success);
+    }
+  }
+
+  &[data-status="warning"] {
+    .progress-bar {
+      background-color: var(--main-warning);
+    }
+  }
+
+  &[data-status="error"] {
+    .progress-bar {
+      background-color: var(--main-alert);
+    }
+  }
+
+}

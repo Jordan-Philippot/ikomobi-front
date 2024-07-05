@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { clearToken, setToken } from "../redux/reducers/authReducer";
+import useMessage from "../hooks/useMessage";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -17,6 +18,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const { sendSuccess, sendError } = useMessage();
+
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useDispatch();
@@ -48,8 +52,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       dispatch(setToken(response.data.token));
       setIsAuthenticated(true);
       router.push("/todos");
+      sendSuccess("Login successful");
     } catch (error: any) {
-      console.error("Failed to login:", error);
+      sendError("Login failed");
       throw error;
     }
   };
@@ -58,6 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     sessionStorage.removeItem("token");
     dispatch(clearToken());
     setIsAuthenticated(false);
+    sendSuccess("Logout successful");
     router.push("/");
   };
 

@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { clearToken, setToken } from "../redux/reducers/authReducer";
+import { clearToken, setToken, setUser } from "../redux/reducers/authReducer";
 import useMessage from "../hooks/useMessage";
 
 interface AuthContextType {
@@ -27,9 +27,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
-    if (token) {
+    const userId = sessionStorage.getItem("userId");
+
+    if (token && userId) {
+      const userIdInt = parseInt(userId);
       setIsAuthenticated(true);
       dispatch(setToken(token));
+      dispatch(setUser(userIdInt));
+
       if (pathname === "/") {
         router.push("/todos");
       }
@@ -49,7 +54,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         { withCredentials: true }
       );
       sessionStorage.setItem("token", response.data.token);
+      sessionStorage.setItem("userId", response.data.user.id);
+
       dispatch(setToken(response.data.token));
+      dispatch(setUser(response.data.user.id));
+
       setIsAuthenticated(true);
       router.push("/todos");
       sendSuccess("Login successful");
@@ -61,7 +70,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = () => {
     sessionStorage.removeItem("token");
+    sessionStorage.removeItem("userId");
+
     dispatch(clearToken());
+    dispatch(setUser(null));
+
     setIsAuthenticated(false);
     sendSuccess("Logout successful");
     router.push("/");

@@ -20,12 +20,16 @@ const initialState: TodoState = {
 };
 
 const port = process.env.NEXT_PUBLIC_API_ENDPOINT;
+
 export const fetchTodos = createAsyncThunk(
   "todos/fetchTodos",
-  async (token: string) => {
+  async ({ token, userId }: { token: string; userId: number }) => {
     const response = await axios.get(port + "/todos", {
       headers: {
         Authorization: `Bearer ${token}`,
+      },
+      params: {
+        userId,
       },
     });
     return response.data;
@@ -34,23 +38,30 @@ export const fetchTodos = createAsyncThunk(
 
 export const addTodo = createAsyncThunk(
   "todos/addTodo",
-  async ({ text, token }: { text: string; token: string }) => {
-    const response = await axios.post(
-      port + "/todos",
-      { text, created_at: new Date() },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+  async ({
+    userId,
+    text,
+    token,
+  }: {
+    userId: number | null;
+    text: string;
+    token: string;
+  }) => {
+    const response = await axios({
+      method: "post",
+      url: port + "/todos",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: { userId, text, created_at: new Date() },
+    });
     return response.data;
   }
 );
 
 export const completeTodo = createAsyncThunk(
   "todos/completeTodo",
-  async ({ id, token }: { id: number; token: string }) => {
+  async ({ id, token }: { id: any; token: string }) => {
     await axios.delete(port + `/todos/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,

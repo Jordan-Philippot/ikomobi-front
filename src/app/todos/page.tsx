@@ -18,26 +18,26 @@ import useMessage from "@/lib/hooks/useMessage";
 const Todos = () => {
   const [text, setText] = useState("");
   const dispatch = useAppDispatch();
-  const { token } = useSelector((state: RootState) => state.auth);
+  const { token, userId } = useSelector((state: RootState) => state.auth);
   const { todos, status } = useSelector((state: RootState) => state.todos);
   const { sendSuccess } = useMessage();
 
   useEffect(() => {
-    if (token) {
-      dispatch(fetchTodos(token));
+    if (token && userId) {
+      dispatch(fetchTodos({ token, userId }));
     }
   }, [token, dispatch]);
 
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
     if (text.length > 0 && text.length <= 50) {
-      dispatch(addTodo({ text, token: token as string }));
+      dispatch(addTodo({ userId, text, token: token as string }));
       setText("");
       sendSuccess("Task added");
     }
   };
 
-  const handleCompleteTodo = (id: number) => {
+  const handleCompleteTodo = (id: any) => {
     dispatch(completeTodo({ id, token: token as string }));
     sendSuccess("Task completed");
   };
@@ -46,6 +46,9 @@ const Todos = () => {
     <main className="page-container">
       <div className="custom-container">
         <Title weight="bold">Todo List</Title>
+        <Title weight="bold" size="h2">
+          User : {userId}
+        </Title>
         <form className="add-todo" onSubmit={handleAddTodo}>
           <Field label={"Add a new task"} name="todo" required>
             <Input

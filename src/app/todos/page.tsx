@@ -6,6 +6,7 @@ import {
   fetchTodos,
   addTodo,
   completeTodo,
+  clearStatus,
 } from "@/lib/redux/reducers/todoReducer";
 import Title from "../ui/Title";
 import Input from "../ui/Input";
@@ -14,13 +15,24 @@ import Button from "../ui/Button";
 import LoaderSuspense from "../ui/LoaderSuspense";
 import TodoItem from "./Todo";
 import useMessage from "@/lib/hooks/useMessage";
+import { useAuth } from "@/lib/context/AuthContext";
 
 const Todos = () => {
   const [text, setText] = useState("");
   const dispatch = useAppDispatch();
-  const { token, userId } = useSelector((state: RootState) => state.auth);
+  const { token, userId, username } = useSelector(
+    (state: RootState) => state.auth
+  );
+  const { logout } = useAuth();
   const { todos, status } = useSelector((state: RootState) => state.todos);
   const { sendSuccess } = useMessage();
+
+  useEffect(() => {
+    if (status == "failed") {
+      logout();
+      dispatch(clearStatus({ status: "start" }));
+    }
+  }, [status]);
 
   useEffect(() => {
     if (token && userId) {
@@ -47,7 +59,7 @@ const Todos = () => {
       <div className="custom-container">
         <Title weight="bold">Todo List</Title>
         <Title weight="bold" size="h2">
-          User : {userId}
+          User : {username}
         </Title>
         <form className="add-todo" onSubmit={handleAddTodo}>
           <Field label={"Add a new task"} name="todo" required>

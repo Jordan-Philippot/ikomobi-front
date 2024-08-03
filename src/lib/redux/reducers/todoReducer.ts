@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export interface Todo {
@@ -74,7 +74,16 @@ export const completeTodo = createAsyncThunk(
 const todoSlice = createSlice({
   name: "todos",
   initialState,
-  reducers: {},
+  reducers: {
+    clearStatus: (
+      state,
+      action: PayloadAction<{
+        status: "start" | "loading" | "success" | "failed";
+      }>
+    ) => {
+      state.status = action.payload.status;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTodos.pending, (state) => {
@@ -88,6 +97,10 @@ const todoSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message || null;
       })
+      .addCase(addTodo.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message || null;
+      })
       .addCase(addTodo.fulfilled, (state, action) => {
         state.todos.push(action.payload);
       })
@@ -96,5 +109,5 @@ const todoSlice = createSlice({
       });
   },
 });
-
+export const { clearStatus } = todoSlice.actions;
 export default todoSlice.reducer;

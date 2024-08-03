@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { clearToken, setToken, setUser } from "../redux/reducers/authReducer";
+import { setUser } from "../redux/reducers/authReducer";
 import useMessage from "../hooks/useMessage";
 
 interface AuthContextType {
@@ -27,23 +27,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
-    const userId = sessionStorage.getItem("userId");
 
-    if (token && userId) {
-      const userIdInt = parseInt(userId);
-      setIsAuthenticated(true);
-      dispatch(setToken(token));
-      dispatch(setUser(userIdInt));
-
-      if (pathname === "/") {
-        router.push("/todos");
-      }
-    } else {
-      if (pathname !== "/") {
-        router.push("/");
-      }
+    if (token) {
+      getUser(token).then((response) => {
+        if (response && response.data) {
+          setIsAuthenticated(true);
+          dispatch(
+            setUser({
+              userId: response.data.user.id,
+              username: response.data.user.username,
+              token: token,
+            })
+          );
+          if (pathname === "/") {
+            router.push("/todos");
+          }
+        }
+      });
+    } else if (pathname !== "/") {
+      router.push("/");
     }
   }, [router]);
+
+  const getUser = async (token: string) => {
+    const URI_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT as string;
+
+    try {
+      const response = await axios.get(`${URI_ENDPOINT}/auth/user`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        logout();
+      }
+    }
+  };
 
   const login = async (username: string, password: string) => {
     try {
@@ -54,10 +75,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         { withCredentials: true }
       );
       sessionStorage.setItem("token", response.data.token);
-      sessionStorage.setItem("userId", response.data.user.id);
 
-      dispatch(setToken(response.data.token));
-      dispatch(setUser(response.data.user.id));
+      dispatch(
+        setUser({
+          userId: response.data.user.id,
+          username: response.data.user.username,
+          token: response.data.token,
+        })
+      );
 
       setIsAuthenticated(true);
       router.push("/todos");
@@ -70,11 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = () => {
     sessionStorage.removeItem("token");
-    sessionStorage.removeItem("userId");
-
-    dispatch(clearToken());
     dispatch(setUser(null));
-
     setIsAuthenticated(false);
     sendSuccess("Logout successful");
     router.push("/");
